@@ -26,7 +26,7 @@ pipeline {
                 bat '''
                     set BUILD_ID=dontKillMe
                     start /B npm start
-                    powershell -NoProfile -Command "$ready=$false; for($i=0;$i -lt 30;$i++){try{$r=Invoke-WebRequest -Uri http://localhost:3000 -UseBasicParsing -TimeoutSec 2; if($r.StatusCode -eq 200){$ready=$true; break}}catch{}; Start-Sleep -Seconds 2}; if(-not $ready){exit 1}"
+                    powershell -NoProfile -Command "$ready=$false; for($i=0;$i -lt 60;$i++){try{$r=Invoke-WebRequest -Uri http://localhost:3000 -UseBasicParsing -TimeoutSec 2; if($r.StatusCode -eq 200){$ready=$true; break}}catch{}; Write-Host \\"Waiting for dev server... attempt $i\\"; Start-Sleep -Seconds 3}; if(-not $ready){Write-Host 'Dev server did not become ready in time'; exit 1} else {Write-Host 'Dev server is ready'}"
                 '''
             }
         }
