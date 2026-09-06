@@ -26,7 +26,7 @@ pipeline {
                 bat '''
                     set BUILD_ID=dontKillMe
                     start /B npm start
-                    powershell -NoProfile -Command "$ready=$false; for($i=0;$i -lt 60;$i++){try{$r=Invoke-WebRequest -Uri http://localhost:3000 -UseBasicParsing -TimeoutSec 2; if($r.StatusCode -eq 200){$ready=$true; break}}catch{}; Write-Host \\"Waiting for dev server... attempt $i\\"; Start-Sleep -Seconds 3}; if(-not $ready){Write-Host 'Dev server did not become ready in time'; exit 1} else {Write-Host 'Dev server is ready'}"
+                    powershell -NoProfile -Command "$ready=$false; for($i=0;$i -lt 60;$i++){try{$c=New-Object System.Net.Sockets.TcpClient; $iar=$c.BeginConnect('127.0.0.1',3000,$null,$null); $ok=$iar.AsyncWaitHandle.WaitOne(1000,$false); if($ok -and $c.Connected){$ready=$true; $c.Close(); break}; $c.Close()}catch{}; Write-Host \\"Waiting for dev server (port check)... attempt $i\\"; Start-Sleep -Seconds 3}; if(-not $ready){Write-Host 'Dev server did not become ready in time'; exit 1} else {Write-Host 'Dev server port is open'}"
                 '''
             }
         }
